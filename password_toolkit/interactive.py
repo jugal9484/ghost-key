@@ -18,7 +18,7 @@ def _prompt(label: str) -> str:
 
 def _read_password() -> str:
     while True:
-        password = input(ui.colorize("  Password: ", ui.CYAN))
+        password = ui.read_password()
         if password:
             return password
         print(ui.colorize("  Please enter a password.", ui.YELLOW))
@@ -75,7 +75,18 @@ def _do_audit() -> None:
 def _show_generated(password: str) -> None:
     print(f"\n  {ui.colorize(password, ui.GREEN, ui.BOLD)}\n")
     result = strength.check_strength(password)
-    print(f"  Strength: {ui.strength_bar(result['score'])} {result['score']}/100\n")
+    print(f"  Strength: {ui.strength_bar(result['score'])} {result['score']}/100")
+    print(f"  Entropy:  {result['entropy_bits']} bits\n")
+
+
+def _show_generated_passphrase(passphrase: str, words: int) -> None:
+    # The character-based strength model underrates dictionary passphrases, so
+    # report the true entropy from the number of words and the wordlist size.
+    print(f"\n  {ui.colorize(passphrase, ui.GREEN, ui.BOLD)}\n")
+    bits = generator.passphrase_entropy(words)
+    score = max(0, min(100, round(bits / 75.0 * 100)))
+    print(f"  Strength: {ui.strength_bar(score)} {score}/100")
+    print(f"  Entropy:  {round(bits, 1)} bits ({words} words)\n")
 
 
 def _do_generate() -> None:
@@ -97,9 +108,11 @@ def _do_passphrase() -> None:
     words = _ask_int("Number of words", 4)
     separator = _prompt("Separator [-]") or "-"
     try:
-        _show_generated(generator.generate_passphrase(words=words, separator=separator))
+        passphrase = generator.generate_passphrase(words=words, separator=separator)
     except ValueError as exc:
         print(ui.colorize(f"  Error: {exc}", ui.RED))
+        return
+    _show_generated_passphrase(passphrase, words)
 
 
 ACTIONS = {

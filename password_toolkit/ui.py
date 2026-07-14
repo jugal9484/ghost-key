@@ -4,6 +4,7 @@ Colors are disabled automatically when stdout is not a TTY or when the
 NO_COLOR environment variable is set (https://no-color.org).
 """
 
+import getpass
 import os
 import sys
 
@@ -54,6 +55,26 @@ def colorize(text: str, *codes: str) -> str:
     if not codes or not supports_color():
         return text
     return "".join(codes) + text + RESET
+
+
+def read_password(label: str = "Password") -> str:
+    """Read a password from the user, masked by default.
+
+    Uses ``getpass`` so the secret is not echoed to the screen. Set the
+    environment variable ``GHOSTKEY_VISIBLE=1`` to type visibly instead, which
+    is useful in environments (some IDE consoles) where echo cannot be
+    disabled and ``getpass`` would otherwise fall back with a warning.
+    """
+    prompt = colorize(f"  {label}: ", CYAN)
+    if os.environ.get("GHOSTKEY_VISIBLE"):
+        return input(prompt)
+    try:
+        return getpass.getpass(prompt)
+    except (getpass.GetPassWarning, EOFError, KeyboardInterrupt):
+        raise
+    except Exception:
+        # Terminal can't disable echo; fall back to visible input.
+        return input(prompt)
 
 
 def strength_bar(score: int, width: int = 30) -> str:

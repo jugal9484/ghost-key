@@ -1,0 +1,10 @@
+# Normalize line endings: LF in the repo for all text files.
+* text=auto eol=lf
+
+# Windows launcher must keep CRLF to run reliably under cmd.exe.
+*.bat text eol=crlf
+
+# Treat these as binary (never munge).
+*.png binary
+*.jpg binary
+*.ico binary

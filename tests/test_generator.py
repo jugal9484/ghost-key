@@ -1,3 +1,4 @@
+import math
 import string
 
 import pytest
@@ -43,3 +44,16 @@ def test_passphrase_word_count_and_separator():
 def test_passphrase_minimum_words():
     with pytest.raises(ValueError):
         generator.generate_passphrase(words=2)
+
+
+def test_wordlist_has_no_duplicates():
+    assert len(generator.WORDLIST) == len(set(generator.WORDLIST))
+
+
+def test_passphrase_entropy_matches_formula():
+    expected = 4 * math.log2(len(generator.WORDLIST))
+    assert round(generator.passphrase_entropy(4), 2) == round(expected, 2)
+
+
+def test_passphrase_entropy_zero_for_no_words():
+    assert generator.passphrase_entropy(0) == 0.0

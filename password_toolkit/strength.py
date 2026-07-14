@@ -61,7 +61,7 @@ def has_sequence(password: str, min_len: int = 3) -> bool:
 
 def has_repeat(password: str, min_len: int = 3) -> bool:
     """Detect runs of the same character (aaa, 111)."""
-    return re.search(r"(.)\1{%d,}" % (min_len - 1), password) is not None
+    return re.search(rf"(.)\1{{{min_len - 1},}}", password) is not None
 
 
 def has_keyboard_walk(password: str, min_len: int = 4) -> bool:

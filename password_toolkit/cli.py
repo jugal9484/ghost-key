@@ -10,7 +10,7 @@ from password_toolkit import breach, generator, interactive, strength, ui
 
 
 def _read_password() -> str:
-    password = input("Password: ")
+    password = ui.read_password()
     if not password:
         print("No password entered.", file=sys.stderr)
         raise SystemExit(2)
@@ -65,7 +65,10 @@ def _cmd_interactive(_args) -> int:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="ghostkey",
-        description="Ghost Key: check password strength, detect breached passwords, and generate secure passwords.",
+        description=(
+            "Ghost Key: check password strength, detect breached passwords, "
+            "and generate secure passwords."
+        ),
         epilog="Run with no arguments to launch the interactive terminal UI.",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -73,16 +76,24 @@ def build_parser() -> argparse.ArgumentParser:
     check = subparsers.add_parser("check", help="Check password strength")
     check.set_defaults(func=_cmd_check)
 
-    breach_cmd = subparsers.add_parser("breach", help="Check password against known breaches (HaveIBeenPwned)")
+    breach_cmd = subparsers.add_parser(
+        "breach", help="Check password against known breaches (HaveIBeenPwned)"
+    )
     breach_cmd.set_defaults(func=_cmd_breach)
 
     gen = subparsers.add_parser("generate", help="Generate a secure password or passphrase")
-    gen.add_argument("--length", type=int, default=generator.DEFAULT_LENGTH, help="Password length (default: 16)")
+    gen.add_argument(
+        "--length", type=int, default=generator.DEFAULT_LENGTH, help="Password length (default: 16)"
+    )
     gen.add_argument("--no-upper", action="store_true", help="Exclude uppercase letters")
     gen.add_argument("--no-digits", action="store_true", help="Exclude digits")
     gen.add_argument("--no-symbols", action="store_true", help="Exclude symbols")
-    gen.add_argument("--passphrase", action="store_true", help="Generate a word-based passphrase instead")
-    gen.add_argument("--words", type=int, default=4, help="Number of words in the passphrase (default: 4)")
+    gen.add_argument(
+        "--passphrase", action="store_true", help="Generate a word-based passphrase instead"
+    )
+    gen.add_argument(
+        "--words", type=int, default=4, help="Number of words in the passphrase (default: 4)"
+    )
     gen.add_argument("--separator", default="-", help="Passphrase word separator (default: '-')")
     gen.set_defaults(func=_cmd_generate)
 
@@ -92,7 +103,25 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _configure_stdio() -> None:
+    """Prefer UTF-8 output so the box-drawing bars render everywhere.
+
+    On Windows the default console codec (cp1252) cannot encode the block
+    characters used by the strength bar, which crashes when output is piped.
+    Reconfiguring to UTF-8 with a replacement fallback keeps output safe.
+    """
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure is None:
+            continue
+        try:
+            reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+
+
 def main(argv=None) -> int:
+    _configure_stdio()
     argv = sys.argv[1:] if argv is None else argv
     if not argv:
         return interactive.run()
