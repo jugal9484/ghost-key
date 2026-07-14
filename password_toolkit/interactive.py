@@ -1,6 +1,4 @@
-"""Interactive menu-driven terminal UI for the password toolkit."""
-
-import getpass
+"""Interactive menu-driven terminal UI for Ghost Key."""
 
 from password_toolkit import breach, generator, strength, ui
 
@@ -20,7 +18,7 @@ def _prompt(label: str) -> str:
 
 def _read_password() -> str:
     while True:
-        password = getpass.getpass("  Password (input hidden): ")
+        password = input(ui.colorize("  Password: ", ui.CYAN))
         if password:
             return password
         print(ui.colorize("  Please enter a password.", ui.YELLOW))

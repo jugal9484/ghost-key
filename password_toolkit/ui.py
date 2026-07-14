@@ -23,11 +23,23 @@ RATING_COLORS = {
     "Very Strong": GREEN,
 }
 
-BANNER = """
-╔════════════════════════════╗
-║       PASSWORD TOOLKIT       ║
-║  check · breach · generate   ║
-╚════════════════════════════╝"""
+BANNER = r"""
+  ____ _               _
+ / ___| |__   ___  ___| |_
+| |  _| '_ \ / _ \/ __| __|
+| |_| | | | | (_) \__ \ |_
+ \____|_| |_|\___/|___/\__|
+
+██╗  ██╗███████╗██╗   ██╗
+██║ ██╔╝██╔════╝╚██╗ ██╔╝
+█████╔╝ █████╗   ╚████╔╝
+██╔═██╗ ██╔══╝    ╚██╔╝
+██║  ██╗███████╗   ██║
+╚═╝  ╚═╝╚══════╝   ╚═╝
+
+     [ Check ] • [ Breach ] • [ Generate ]
+
+     crafted with care by W1ZARD • jugaljoshi.vercel.app"""
 
 
 def supports_color(stream=None) -> bool:

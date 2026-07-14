@@ -1,17 +1,16 @@
-"""Command-line interface for the password toolkit.
+"""Command-line interface for Ghost Key.
 
 Running with no arguments launches the interactive terminal UI.
 """
 
 import argparse
-import getpass
 import sys
 
 from password_toolkit import breach, generator, interactive, strength, ui
 
 
 def _read_password() -> str:
-    password = getpass.getpass("Password (input hidden): ")
+    password = input("Password: ")
     if not password:
         print("No password entered.", file=sys.stderr)
         raise SystemExit(2)
@@ -35,7 +34,7 @@ def _cmd_breach(_args) -> int:
             f"COMPROMISED: this password appeared in {count:,} known breaches.",
             ui.RED, ui.BOLD,
         ))
-        print("Do not use it. Generate a new one with: python -m password_toolkit generate")
+        print("Do not use it. Generate a new one with: ghostkey generate")
         return 1
     print(ui.colorize("Good news: this password was not found in known breaches.", ui.GREEN))
     return 0
@@ -65,8 +64,8 @@ def _cmd_interactive(_args) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="password_toolkit",
-        description="Check password strength, detect breached passwords, and generate secure passwords.",
+        prog="ghostkey",
+        description="Ghost Key: check password strength, detect breached passwords, and generate secure passwords.",
         epilog="Run with no arguments to launch the interactive terminal UI.",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)

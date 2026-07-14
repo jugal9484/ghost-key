@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ghostkey"
+version = "1.1.0"
+description = "Ghost Key: check password strength, detect breached passwords, and generate secure passwords."
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "W1ZARD" }]
+
+[project.urls]
+Portfolio = "https://jugaljoshi.vercel.app"
+Repository = "https://gitlab.com/w1zard1/password-toolkit"
+
+[project.scripts]
+ghostkey = "password_toolkit.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["password_toolkit*"]
